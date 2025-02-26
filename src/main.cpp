@@ -39,6 +39,10 @@ Renderer3D<RGB565, LOADED_SHADERS, uint16_t> renderer;
 void setup() 
 {
   Serial.begin(115200);
+  Serial.println("Starting setup...");
+
+  pinMode(TOUCH_INT, INPUT_PULLUP);
+  Wire.begin();
 
   // allocate second framebuffer
   fb2 = (uint16_t*)malloc(SLX * SLY * sizeof(uint16_t));
@@ -77,6 +81,8 @@ void setup()
   renderer.setCulling(1);
   renderer.setTextureQuality(SHADER_TEXTURE_NEAREST);
   renderer.setTextureWrappingMode(SHADER_TEXTURE_WRAP_POW2);
+
+  Serial.println("Setup complete!");
 }
 
 tgx::fMat4 moveModel(int &);
@@ -86,12 +92,14 @@ int prev_loopnumber = -1;
 
 /** Main loop */
 void loop() {
+  Serial.println("Loop step...");
+
   // compute the model position
   fMat4 M = moveModel(loopnumber);
   renderer.setModelMatrix(M);
 
   // draw the 3D mesh
-  imgfb.fillScreen(RGB565_Cyan);  // clear the framebuffer (black background)
+  imgfb.fillScreen(RGB565_Navy);  // clear the framebuffer (black background)
   renderer.clearZbuffer();        // clear the z-buffer
 
   // choose the shader to use
@@ -134,6 +142,8 @@ void loop() {
 
 tgx::fMat4 moveModel(int &loopnumber)
 {
+  Serial.println("Moving model.");
+
   const float end1 = 6000;
   const float end2 = 2000;
   const float end3 = 6000;
